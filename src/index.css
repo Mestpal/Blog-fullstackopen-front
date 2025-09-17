@@ -1,0 +1,13 @@
+.message {
+  color: green;
+  border: solid 5px green;
+  border-radius: 4px;
+  padding: 0.5em
+}
+
+.error{
+  color: red;
+  border: solid 5px red;
+  border-radius: 4px;
+  padding: 0.5em
+}

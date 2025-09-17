@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import './index.css'
 
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import MessageViewer from './components/MessageViewer'
 
 import BlogService from './services/blogs'
 import LoginService from './services/login'
@@ -16,6 +18,9 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [newBlog, setNewBlog] = useState(null)
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState(false)
+  const [showMessage, setShowMessage] = useState(false)
 
   const onChangeUsername = (event) => setUsername(event.target.value);
   const onChangePassword = (event) => setPassword(event.target.value);
@@ -53,22 +58,49 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.log(exception);
+      showNotification(exception.response.data.error, true)
     }
   }
 
   const onSubmitBlog = async(event) => {
     event.preventDefault()
-    const blogEntry = {
-      title, author, url
+    try {
+      const blogEntry = {
+        title, author, url
+      }
+      const creatredBlog = await BlogService.create(blogEntry)
+      setNewBlog(creatredBlog)
+      showNotification(`${creatredBlog.title} by ${creatredBlog.author} added`)
+    } catch {
+      showNotification('Invalid Blog', true)
     }
-    await BlogService.create(blogEntry)
-    setNewBlog(blogEntry)
+  }
+
+  const showNotification = (message, isError = false) => {
+    setMessage(message)
+    setError(isError)
+    setShowMessage(true)
+    hideNotification()
+  }
+
+  const hideNotification = () => {
+    const timer = setTimeout(() => {
+      setMessage('')
+      setError(false)
+      setNewBlog(null)
+      setShowMessage(false)
+      clearTimeout(timer)
+    }, 3000)
   }
 
   return (
     <div>
       <h2>blogs</h2>
+      {
+        showMessage
+          ? <MessageViewer message={message} error={error}/>
+          : ''
+      }
 
       <div>
         { user 
