@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './index.css'
 
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import MessageViewer from './components/MessageViewer'
+import Togglable from './components/Toggleable'
 
 import BlogService from './services/blogs'
 import LoginService from './services/login'
@@ -93,6 +94,29 @@ const App = () => {
     }, 3000)
   }
 
+  const blogFormRef = useRef()
+  const blogForm = () => {
+    return <div>
+      <p>
+        {`${user.username} logged in `}
+        <button onClick={LoginService.logout}> Logout</button>
+      </p>
+
+      <Togglable buttonLabel='new blog' ref={ blogFormRef }>
+        <BlogForm 
+          author={author} 
+          title={title}
+          url={url}
+          actionAuthor={onChangeAuthor}
+          actionTitle={onChangeTitle}
+          actionUrl={onChangeUrl}
+          onSubmit={onSubmitBlog}
+        />
+      </Togglable>
+    </div>
+  }
+
+
   return (
     <div>
       <h2>blogs</h2>
@@ -104,22 +128,7 @@ const App = () => {
 
       <div>
         { user 
-          ? <div>
-            <p>
-              {`${user.username} logged in `}
-              <button onClick={LoginService.logout}> Logout</button>
-            </p>
-
-            <BlogForm 
-              author={author} 
-              title={title}
-              url={url}
-              actionAuthor={onChangeAuthor}
-              actionTitle={onChangeTitle}
-              actionUrl={onChangeUrl}
-              onSubmit={onSubmitBlog}
-            />
-          </div>
+          ? blogForm()
           : <div>
               <h2>Log in to application</h2>
               <LoginForm
