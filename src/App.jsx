@@ -15,9 +15,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [newBlog, setNewBlog] = useState(null)
   const [message, setMessage] = useState('')
   const [error, setError] = useState(false)
@@ -25,9 +22,6 @@ const App = () => {
 
   const onChangeUsername = (event) => setUsername(event.target.value);
   const onChangePassword = (event) => setPassword(event.target.value);
-  const onChangeTitle = (event) => setTitle(event.target.value);
-  const onChangeAuthor = (event) => setAuthor(event.target.value);
-  const onChangeUrl = (event) => setUrl(event.target.value);
 
   useEffect(() => {
     BlogService.getAll().then(blogs =>
@@ -63,13 +57,9 @@ const App = () => {
     }
   }
 
-  const onSubmitBlog = async(event) => {
-    event.preventDefault()
+  const onSubmitBlog = async(newBlog) => {
     try {
-      const blogEntry = {
-        title, author, url
-      }
-      const creatredBlog = await BlogService.create(blogEntry)
+      const creatredBlog = await BlogService.create(newBlog)
       setNewBlog(creatredBlog)
       showNotification(`${creatredBlog.title} by ${creatredBlog.author} added`)
     } catch {
@@ -95,6 +85,7 @@ const App = () => {
   }
 
   const blogFormRef = useRef()
+
   const blogForm = () => {
     return <div>
       <p>
@@ -103,19 +94,10 @@ const App = () => {
       </p>
 
       <Togglable buttonLabel='new blog' ref={ blogFormRef }>
-        <BlogForm 
-          author={author} 
-          title={title}
-          url={url}
-          actionAuthor={onChangeAuthor}
-          actionTitle={onChangeTitle}
-          actionUrl={onChangeUrl}
-          onSubmit={onSubmitBlog}
-        />
+        <BlogForm onSubmit={onSubmitBlog} />
       </Togglable>
     </div>
   }
-
 
   return (
     <div>
@@ -140,7 +122,6 @@ const App = () => {
               />
             </div>
         }
-      
       </div>
 
       {blogs.map(blog =>
