@@ -1,5 +1,6 @@
 import { useState } from "react"
 
+import BlogService from "../services/blogs"
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -11,6 +12,18 @@ const Blog = ({ blog }) => {
   }
 
   const [view, setView] = useState(false)
+  const [blogUpdate, setBlogUpdate] = useState({...blog})
+
+  const onClickLike = async() => {
+    const updateInfo = {
+      ...blogUpdate,
+      likes: blogUpdate.likes + 1,
+      user: blog.user.id
+    }
+
+    BlogService.update(updateInfo, blog.id)
+    setBlogUpdate(updateInfo)
+  }
 
   const showDetails = () => {
     setView(!view)
@@ -27,7 +40,7 @@ const Blog = ({ blog }) => {
   const BlogDetails = () => {
     return <div>
       {blog.url} <br/>
-      likes {blog.likes} <button> like </button> <br/>
+      likes {blogUpdate.likes} <button onClick={onClickLike}> like </button> <br/>
       {blog.user.name}
     </div>
   }
