@@ -24,9 +24,9 @@ const App = () => {
   const onChangePassword = (event) => setPassword(event.target.value);
 
   useEffect(() => {
-    BlogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    BlogService.getAll().then(blogs => {
+      setBlogs(sortBlogs(blogs, 'likes', 'DESC'))
+    })  
   }, [newBlog])
 
   useEffect(() => {
@@ -64,6 +64,28 @@ const App = () => {
       showNotification(`${creatredBlog.title} by ${creatredBlog.author} added`)
     } catch {
       showNotification('Invalid Blog', true)
+    }
+  }
+
+  const onClickLike = (likedBlog) => {
+    let updatedBlogs = blogs.map(blog => {
+      if(blog.id === likedBlog.id) {
+        blog.likes += 1
+      }
+      return blog
+    })
+
+    updatedBlogs = sortBlogs(updatedBlogs, 'likes', 'DESC')    
+    setBlogs(updatedBlogs)
+  }
+
+  const sortBlogs = (blogs, field, order) => {
+    if (!blogs.length) return blogs
+
+    if (order === 'DESC') {
+      return blogs.sort((a, b) => b[field] - a[field])
+    } else {
+      return blogs.sort((a, b) => a[field] - b[field])
     }
   }
 
@@ -125,7 +147,7 @@ const App = () => {
       </div>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} action={onClickLike} />
       )}
     </div>
   )
