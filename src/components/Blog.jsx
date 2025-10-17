@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import BlogService from "../services/blogs"
 
-const Blog = ({ blog, action }) => {  
+const Blog = ({ blog, likeAction, deleteAction }) => {  
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -20,8 +20,17 @@ const Blog = ({ blog, action }) => {
       user: blog.user.id
     }
 
-    action(updatedBlog)
+    likeAction(updatedBlog)
     BlogService.update(updatedBlog, blog.id)
+  }
+
+  const removeBlog = () => {
+    const isConfirm = confirm(`Remove Blog: ${blog.title} by ${blog.author}`)
+    
+    if (isConfirm) {
+      BlogService.remove(blog.id)
+      deleteAction(blog)
+    }
   }
 
   const showDetails = () => {
@@ -40,7 +49,8 @@ const Blog = ({ blog, action }) => {
     return <div>
       {blog.url} <br/>
       likes {blog.likes} <button onClick={onClickLike}> like </button> <br/>
-      {blog.user.name}
+      {blog.user.name}<br/>
+      <button onClick={removeBlog}> Remove </button>
     </div>
   }
 

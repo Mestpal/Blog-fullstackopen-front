@@ -67,7 +67,7 @@ const App = () => {
     }
   }
 
-  const onClickLike = (likedBlog) => {
+  const onClickLikeBlog = (likedBlog) => {
     let updatedBlogs = blogs.map(blog => {
       if(blog.id === likedBlog.id) {
         blog.likes += 1
@@ -77,6 +77,15 @@ const App = () => {
 
     updatedBlogs = sortBlogs(updatedBlogs, 'likes', 'DESC')    
     setBlogs(updatedBlogs)
+  }
+
+  const onClickDeleteBlog = (deleteBlog) => {
+    const index = blogs.findIndex(blog => blog.id === deleteBlog.id)
+
+    if (index >= 0) {      
+      blogs.splice(index, 1)
+      setBlogs([...blogs])
+    }
   }
 
   const sortBlogs = (blogs, field, order) => {
@@ -147,7 +156,7 @@ const App = () => {
       </div>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} action={onClickLike} />
+        <Blog key={blog.id} blog={blog} likeAction={onClickLikeBlog} deleteAction={onClickDeleteBlog}/>
       )}
     </div>
   )
